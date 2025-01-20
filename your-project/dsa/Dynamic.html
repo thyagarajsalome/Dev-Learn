@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+
+      .theory-section {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .visualization {
+        display: flex;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .example-container {
+        flex: 1;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .grid {
+        display: grid;
+        gap: 2px;
+        margin: 20px 0;
+      }
+
+      .cell {
+        background: #e9ecef;
+        padding: 10px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .cell.active {
+        background: #4caf50;
+        color: white;
+      }
+
+      .cell.computed {
+        background: #2196f3;
+        color: white;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+      }
+
+      button {
+        padding: 8px 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      pre {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+
+      .stats {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+      }
+
+      .stat-item {
+        background-color: #f5f5f5;
+        padding: 8px 16px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Understanding Dynamic Programming</h1>
+
+      <div class="theory-section">
+        <h2>What is Dynamic Programming?</h2>
+        <p>
+          Dynamic Programming (DP) is a method for solving complex problems by
+          breaking them down into simpler subproblems. It is applicable when:
+        </p>
+        <ul>
+          <li>The problem can be broken down into smaller subproblems</li>
+          <li>These subproblems have overlapping calculations</li>
+          <li>Solutions to subproblems can be stored and reused</li>
+        </ul>
+
+        <div class="card">
+          <h3>Key Concepts</h3>
+          <ul>
+            <li>
+              <strong>Memoization:</strong> Storing results of expensive
+              function calls and returning the cached result when the same input
+              occurs again
+            </li>
+            <li>
+              <strong>Tabulation:</strong> Building a table of results bottom-up
+              by solving smaller subproblems first
+            </li>
+            <li>
+              <strong>Optimal Substructure:</strong> An optimal solution to the
+              problem contains optimal solutions to subproblems
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="visualization">
+        <div class="example-container">
+          <h3>Fibonacci Sequence Visualization</h3>
+          <p>
+            See how DP calculates Fibonacci numbers efficiently by storing
+            previous results.
+          </p>
+          <div class="controls">
+            <input
+              type="number"
+              id="fibN"
+              min="1"
+              max="10"
+              value="6"
+              placeholder="Enter n"
+            />
+            <button onclick="visualizeFibonacci()">Calculate Fibonacci</button>
+            <button onclick="resetFibonacci()">Reset</button>
+          </div>
+          <div id="fibGrid" class="grid"></div>
+          <div class="stats">
+            <div class="stat-item">
+              Calculations: <span id="fibCalcs">0</span>
+            </div>
+            <div class="stat-item">Result: <span id="fibResult">0</span></div>
+          </div>
+        </div>
+
+        <div class="example-container">
+          <h3>0/1 Knapsack Visualization</h3>
+          <p>Visualize how DP solves the classic knapsack problem.</p>
+          <div class="controls">
+            <button onclick="visualizeKnapsack()">Start Visualization</button>
+            <button onclick="resetKnapsack()">Reset</button>
+          </div>
+          <div id="knapsackGrid" class="grid"></div>
+          <div class="stats">
+            <div class="stat-item">
+              Max Value: <span id="knapsackResult">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>JavaScript Implementation Examples</h3>
+        <pre>
+// Fibonacci with DP (Memoization)
+function fibMemo(n, memo = {}) {
+    if (n in memo) return memo[n];
+    if (n <= 1) return n;
+    
+    memo[n] = fibMemo(n-1, memo) + fibMemo(n-2, memo);
+    return memo[n];
+}
+
+// Fibonacci with DP (Tabulation)
+function fibTable(n) {
+    if (n <= 1) return n;
+    
+    let dp = new Array(n + 1);
+    dp[0] = 0;
+    dp[1] = 1;
+    
+    for (let i = 2; i <= n; i++) {
+        dp[i] = dp[i-1] + dp[i-2];
+    }
+    
+    return dp[n];
+}
+
+// 0/1 Knapsack with DP
+function knapsack(values, weights, capacity) {
+    const n = values.length;
+    const dp = Array(n + 1).fill().map(() => Array(capacity + 1).fill(0));
+    
+    for (let i = 1; i <= n; i++) {
+        for (let w = 0; w <= capacity; w++) {
+            if (weights[i-1] <= w) {
+                dp[i][w] = Math.max(
+                    values[i-1] + dp[i-1][w - weights[i-1]],
+                    dp[i-1][w]
+                );
+            } else {
+                dp[i][w] = dp[i-1][w];
+            }
+        }
+    }
+    
+    return dp[n][capacity];
+}</pre
+        >
+      </div>
+    </div>
+
+    <script>
+      let fibCalcs = 0;
+      let fibMemo = {};
+
+      function createGrid(rows, cols, containerId) {
+        const container = document.getElementById(containerId);
+        container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+        container.innerHTML = "";
+        for (let i = 0; i < rows; i++) {
+          for (let j = 0; j < cols; j++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.textContent = "0";
+            container.appendChild(cell);
+          }
+        }
+      }
+
+      async function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      async function visualizeFibonacci() {
+        const n = parseInt(document.getElementById("fibN").value);
+        if (n < 1 || n > 10) return;
+
+        resetFibonacci();
+        createGrid(2, n + 1, "fibGrid");
+
+        const cells = document.querySelectorAll("#fibGrid .cell");
+        fibCalcs = 0;
+        fibMemo = {};
+
+        // Calculate Fibonacci with visualization
+        async function fibDP(n) {
+          if (n in fibMemo) {
+            const cell = document.querySelector(
+              `#fibGrid .cell[data-row="0"][data-col="${n}"]`
+            );
+            cell.classList.add("computed");
+            return fibMemo[n];
+          }
+
+          if (n <= 1) {
+            fibMemo[n] = n;
+            const cell = document.querySelector(
+              `#fibGrid .cell[data-row="0"][data-col="${n}"]`
+            );
+            cell.classList.add("active");
+            cell.textContent = n;
+            await sleep(500);
+            return n;
+          }
+
+          fibCalcs++;
+          document.getElementById("fibCalcs").textContent = fibCalcs;
+
+          const cell = document.querySelector(
+            `#fibGrid .cell[data-row="0"][data-col="${n}"]`
+          );
+          cell.classList.add("active");
+
+          const n1 = await fibDP(n - 1);
+          const n2 = await fibDP(n - 2);
+
+          fibMemo[n] = n1 + n2;
+          cell.textContent = fibMemo[n];
+          cell.classList.remove("active");
+          cell.classList.add("computed");
+
+          const resultCell = document.querySelector(
+            `#fibGrid .cell[data-row="1"][data-col="${n}"]`
+          );
+          resultCell.textContent = fibMemo[n];
+          resultCell.classList.add("computed");
+
+          await sleep(500);
+          return fibMemo[n];
+        }
+
+        const result = await fibDP(n);
+        document.getElementById("fibResult").textContent = result;
+      }
+
+      function resetFibonacci() {
+        document.getElementById("fibGrid").innerHTML = "";
+        document.getElementById("fibCalcs").textContent = "0";
+        document.getElementById("fibResult").textContent = "0";
+        fibMemo = {};
+        fibCalcs = 0;
+      }
+
+      // Knapsack visualization
+      async function visualizeKnapsack() {
+        const values = [60, 100, 120];
+        const weights = [10, 20, 30];
+        const capacity = 50;
+
+        createGrid(values.length + 1, capacity + 1, "knapsackGrid");
+
+        const dp = Array(values.length + 1)
+          .fill()
+          .map(() => Array(capacity + 1).fill(0));
+
+        for (let i = 1; i <= values.length; i++) {
+          for (let w = 0; w <= capacity; w++) {
+            const cell = document.querySelector(
+              `#knapsackGrid .cell[data-row="${i}"][data-col="${w}"]`
+            );
+            cell.classList.add("active");
+
+            if (weights[i - 1] <= w) {
+              dp[i][w] = Math.max(
+                values[i - 1] + dp[i - 1][w - weights[i - 1]],
+                dp[i - 1][w]
+              );
+            } else {
+              dp[i][w] = dp[i - 1][w];
+            }
+
+            cell.textContent = dp[i][w];
+            await sleep(50);
+
+            cell.classList.remove("active");
+            cell.classList.add("computed");
+          }
+        }
+
+        document.getElementById("knapsackResult").textContent =
+          dp[values.length][capacity];
+      }
+
+      function resetKnapsack() {
+        document.getElementById("knapsackGrid").innerHTML = "";
+        document.getElementById("knapsackResult").textContent = "0";
+      }
+
+      // Initialize
+      createGrid(2, 7, "fibGrid");
+      createGrid(4, 51, "knapsackGrid");
+    </script>
+  </body>
+</html>

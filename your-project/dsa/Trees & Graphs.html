@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+
+      .theory-section {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .visualization {
+        display: flex;
+        gap: 20px;
+        margin: 20px 0;
+      }
+
+      .canvas-container {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        flex: 1;
+      }
+
+      canvas {
+        background: white;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      button {
+        padding: 8px 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .code-section {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+      }
+
+      pre {
+        background-color: #282c34;
+        color: #abb2bf;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Understanding Trees & Graphs in DSA</h1>
+
+      <div class="theory-section">
+        <h2>What are Trees?</h2>
+        <p>
+          A tree is a hierarchical data structure consisting of nodes connected
+          by edges. Each tree has:
+        </p>
+        <ul>
+          <li>A root node (top-most node)</li>
+          <li>Parent and child nodes (hierarchical relationships)</li>
+          <li>Leaf nodes (nodes with no children)</li>
+        </ul>
+
+        <h2>What are Graphs?</h2>
+        <p>
+          A graph is a non-linear data structure consisting of vertices (nodes)
+          and edges connecting these vertices. Graphs can be:
+        </p>
+        <ul>
+          <li>Directed or Undirected</li>
+          <li>Weighted or Unweighted</li>
+          <li>Cyclic or Acyclic</li>
+        </ul>
+      </div>
+
+      <div class="visualization">
+        <div class="canvas-container">
+          <h3>Binary Tree Visualization</h3>
+          <div class="controls">
+            <button onclick="addNode()">Add Node</button>
+            <button onclick="resetTree()">Reset</button>
+          </div>
+          <canvas id="treeCanvas" width="400" height="300"></canvas>
+        </div>
+
+        <div class="canvas-container">
+          <h3>Graph Visualization</h3>
+          <div class="controls">
+            <button onclick="addVertex()">Add Vertex</button>
+            <button onclick="addEdge()">Add Edge</button>
+            <button onclick="resetGraph()">Reset</button>
+          </div>
+          <canvas id="graphCanvas" width="400" height="300"></canvas>
+        </div>
+      </div>
+
+      <div class="code-section">
+        <h2>Implementation Examples</h2>
+        <h3>Tree Node Implementation:</h3>
+        <pre>
+class TreeNode {
+    constructor(value) {
+        this.value = value;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+class BinaryTree {
+    constructor() {
+        this.root = null;
+    }
+    
+    insert(value) {
+        const newNode = new TreeNode(value);
+        
+        if (!this.root) {
+            this.root = newNode;
+            return;
+        }
+        
+        let current = this.root;
+        while (true) {
+            if (value < current.value) {
+                if (!current.left) {
+                    current.left = newNode;
+                    break;
+                }
+                current = current.left;
+            } else {
+                if (!current.right) {
+                    current.right = newNode;
+                    break;
+                }
+                current = current.right;
+            }
+        }
+    }
+}
+            </pre
+        >
+      </div>
+    </div>
+
+    <script>
+      // Tree Visualization
+      const treeCanvas = document.getElementById("treeCanvas");
+      const treeCtx = treeCanvas.getContext("2d");
+      let treeNodes = [];
+
+      function drawNode(x, y, value) {
+        treeCtx.beginPath();
+        treeCtx.arc(x, y, 20, 0, Math.PI * 2);
+        treeCtx.fillStyle = "#4CAF50";
+        treeCtx.fill();
+        treeCtx.stroke();
+
+        treeCtx.fillStyle = "white";
+        treeCtx.textAlign = "center";
+        treeCtx.textBaseline = "middle";
+        treeCtx.fillText(value, x, y);
+      }
+
+      function drawTree() {
+        treeCtx.clearRect(0, 0, treeCanvas.width, treeCanvas.height);
+
+        for (let i = 0; i < treeNodes.length; i++) {
+          const level = Math.floor(Math.log2(i + 1));
+          const position = i - Math.pow(2, level) + 1;
+          const x = treeCanvas.width / 2 + position * 80;
+          const y = 50 + level * 60;
+
+          drawNode(x, y, treeNodes[i]);
+
+          // Draw edges
+          if (i > 0) {
+            const parentIndex = Math.floor((i - 1) / 2);
+            const parentLevel = Math.floor(Math.log2(parentIndex + 1));
+            const parentPosition = parentIndex - Math.pow(2, parentLevel) + 1;
+            const parentX = treeCanvas.width / 2 + parentPosition * 80;
+            const parentY = 50 + parentLevel * 60;
+
+            treeCtx.beginPath();
+            treeCtx.moveTo(parentX, parentY + 20);
+            treeCtx.lineTo(x, y - 20);
+            treeCtx.stroke();
+          }
+        }
+      }
+
+      function addNode() {
+        if (treeNodes.length < 15) {
+          treeNodes.push(Math.floor(Math.random() * 100));
+          drawTree();
+        }
+      }
+
+      function resetTree() {
+        treeNodes = [];
+        treeCtx.clearRect(0, 0, treeCanvas.width, treeCanvas.height);
+      }
+
+      // Graph Visualization
+      const graphCanvas = document.getElementById("graphCanvas");
+      const graphCtx = graphCanvas.getContext("2d");
+      let vertices = [];
+      let edges = [];
+
+      function drawVertex(x, y, label) {
+        graphCtx.beginPath();
+        graphCtx.arc(x, y, 20, 0, Math.PI * 2);
+        graphCtx.fillStyle = "#4CAF50";
+        graphCtx.fill();
+        graphCtx.stroke();
+
+        graphCtx.fillStyle = "white";
+        graphCtx.textAlign = "center";
+        graphCtx.textBaseline = "middle";
+        graphCtx.fillText(label, x, y);
+      }
+
+      function drawGraph() {
+        graphCtx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+        // Draw edges
+        edges.forEach((edge) => {
+          const start = vertices[edge[0]];
+          const end = vertices[edge[1]];
+
+          graphCtx.beginPath();
+          graphCtx.moveTo(start.x, start.y);
+          graphCtx.lineTo(end.x, end.y);
+          graphCtx.stroke();
+        });
+
+        // Draw vertices
+        vertices.forEach((vertex, i) => {
+          drawVertex(vertex.x, vertex.y, i);
+        });
+      }
+
+      function addVertex() {
+        if (vertices.length < 8) {
+          const x = 50 + Math.random() * (graphCanvas.width - 100);
+          const y = 50 + Math.random() * (graphCanvas.height - 100);
+          vertices.push({ x, y });
+          drawGraph();
+        }
+      }
+
+      function addEdge() {
+        if (vertices.length >= 2) {
+          const start = Math.floor(Math.random() * vertices.length);
+          let end = Math.floor(Math.random() * vertices.length);
+          while (end === start) {
+            end = Math.floor(Math.random() * vertices.length);
+          }
+          edges.push([start, end]);
+          drawGraph();
+        }
+      }
+
+      function resetGraph() {
+        vertices = [];
+        edges = [];
+        graphCtx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+      }
+    </script>
+  </body>
+</html>

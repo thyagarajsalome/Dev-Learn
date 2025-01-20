@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Intermediate JavaScript Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f0f2f5;
+      }
+
+      .section {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .code-block {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-family: "Monaco", monospace;
+        overflow-x: auto;
+      }
+
+      .interactive-demo {
+        border: 1px solid #e1e4e8;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 8px;
+        background: #f8f9fa;
+      }
+
+      button {
+        background: #0366d6;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background: #0255b3;
+      }
+
+      .result {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f1f8ff;
+        border-radius: 6px;
+        border-left: 4px solid #0366d6;
+      }
+
+      .chart-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+      }
+
+      .tab {
+        padding: 12px 24px;
+        background: #e1e4e8;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .tab.active {
+        background: #0366d6;
+        color: white;
+      }
+
+      .content {
+        display: none;
+      }
+
+      .content.active {
+        display: block;
+      }
+
+      .memory-visualization {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+      }
+
+      .memory-block {
+        padding: 15px;
+        background: #f1f8ff;
+        border-radius: 6px;
+        min-width: 150px;
+        text-align: center;
+      }
+
+      .error {
+        color: #d73a49;
+        background: #ffeef0;
+        padding: 10px;
+        border-radius: 6px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Intermediate JavaScript Concepts</h1>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showContent('closures')">
+        Closures
+      </button>
+      <button class="tab" onclick="showContent('promises')">
+        Promises & Async
+      </button>
+      <button class="tab" onclick="showContent('scope')">
+        Scope & Hoisting
+      </button>
+      <button class="tab" onclick="showContent('prototypes')">
+        Prototypes
+      </button>
+    </div>
+
+    <div id="closures" class="content active section">
+      <h2>Closures</h2>
+      <p>
+        A closure is the combination of a function and the lexical environment
+        within which that function was declared.
+      </p>
+
+      <div class="interactive-demo">
+        <h3>Counter Example:</h3>
+        <div class="code-block">
+          function createCounter() { let count = 0; return { increment: () =>
+          ++count, decrement: () => --count, getCount: () => count }; }
+        </div>
+        <button onclick="demonstrateClosure()">Create New Counter</button>
+        <div id="closureDemo" class="result"></div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="closureChart"></canvas>
+      </div>
+    </div>
+
+    <div id="promises" class="content section">
+      <h2>Promises & Async/Await</h2>
+
+      <div class="interactive-demo">
+        <h3>Promise States Visualization:</h3>
+        <button onclick="demonstratePromise('resolve')">Resolve Promise</button>
+        <button onclick="demonstratePromise('reject')">Reject Promise</button>
+        <div id="promiseDemo" class="result"></div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="promiseChart"></canvas>
+      </div>
+    </div>
+
+    <div id="scope" class="content section">
+      <h2>Scope & Hoisting</h2>
+
+      <div class="interactive-demo">
+        <h3>Scope Chain Visualization:</h3>
+        <button onclick="demonstrateScope()">Show Scope Example</button>
+        <div id="scopeDemo" class="result"></div>
+      </div>
+
+      <div class="memory-visualization" id="scopeVisualization"></div>
+    </div>
+
+    <div id="prototypes" class="content section">
+      <h2>Prototypes & Inheritance</h2>
+
+      <div class="interactive-demo">
+        <h3>Prototype Chain Example:</h3>
+        <button onclick="demonstratePrototype()">Create Object</button>
+        <div id="prototypeDemo" class="result"></div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="prototypeChart"></canvas>
+      </div>
+    </div>
+
+    <script>
+      // Tab Navigation
+      function showContent(contentId) {
+        document.querySelectorAll(".content").forEach((content) => {
+          content.classList.remove("active");
+        });
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+        document.getElementById(contentId).classList.add("active");
+        event.target.classList.add("active");
+      }
+
+      // Closure Demo
+      let counterInstances = [];
+
+      function demonstrateClosure() {
+        const counter = (function () {
+          let count = 0;
+          return {
+            increment: () => ++count,
+            decrement: () => --count,
+            getCount: () => count,
+          };
+        })();
+
+        counterInstances.push(counter);
+        updateClosureDemo();
+      }
+
+      function updateClosureDemo() {
+        const demoDiv = document.getElementById("closureDemo");
+        demoDiv.innerHTML = counterInstances
+          .map(
+            (counter, index) => `
+                Counter ${index + 1}: ${counter.getCount()}
+                <button onclick="incrementCounter(${index})">+</button>
+                <button onclick="decrementCounter(${index})">-</button>
+            `
+          )
+          .join("<br>");
+      }
+
+      function incrementCounter(index) {
+        counterInstances[index].increment();
+        updateClosureDemo();
+      }
+
+      function decrementCounter(index) {
+        counterInstances[index].decrement();
+        updateClosureDemo();
+      }
+
+      // Promise Demo
+      function demonstratePromise(type) {
+        const promiseDemo = document.getElementById("promiseDemo");
+        promiseDemo.innerHTML = "Promise pending...";
+
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            if (type === "resolve") {
+              resolve("Success!");
+            } else {
+              reject("Error!");
+            }
+          }, 1000);
+        })
+          .then((result) => {
+            promiseDemo.innerHTML = `Promise resolved: ${result}`;
+          })
+          .catch((error) => {
+            promiseDemo.innerHTML = `Promise rejected: ${error}`;
+          });
+      }
+
+      // Scope Demo
+      function demonstrateScope() {
+        const scopeDemo = document.getElementById("scopeDemo");
+        const visualization = document.getElementById("scopeVisualization");
+
+        // Example variables in different scopes
+        const global = "Global Scope";
+        function outer() {
+          const outerVar = "Outer Scope";
+          function inner() {
+            const innerVar = "Inner Scope";
+            return `${global} → ${outerVar} → ${innerVar}`;
+          }
+          return inner();
+        }
+
+        scopeDemo.innerHTML = outer();
+
+        visualization.innerHTML = `
+                <div class="memory-block">
+                    <strong>Global Scope</strong>
+                    <div>global = "Global Scope"</div>
+                </div>
+                <div class="memory-block">
+                    <strong>Outer Function</strong>
+                    <div>outerVar = "Outer Scope"</div>
+                </div>
+                <div class="memory-block">
+                    <strong>Inner Function</strong>
+                    <div>innerVar = "Inner Scope"</div>
+                </div>
+            `;
+      }
+
+      // Prototype Demo
+      function demonstratePrototype() {
+        function Animal(name) {
+          this.name = name;
+        }
+
+        Animal.prototype.speak = function () {
+          return `${this.name} makes a sound`;
+        };
+
+        function Dog(name) {
+          Animal.call(this, name);
+        }
+
+        Dog.prototype = Object.create(Animal.prototype);
+        Dog.prototype.constructor = Dog;
+
+        Dog.prototype.bark = function () {
+          return `${this.name} barks!`;
+        };
+
+        const dog = new Dog("Rex");
+
+        const prototypeDemo = document.getElementById("prototypeDemo");
+        prototypeDemo.innerHTML = `
+                Dog name: ${dog.name}<br>
+                Speak method: ${dog.speak()}<br>
+                Bark method: ${dog.bark()}<br>
+                Is instance of Dog: ${dog instanceof Dog}<br>
+                Is instance of Animal: ${dog instanceof Animal}
+            `;
+      }
+
+      // Charts
+      // Closure Usage Chart
+      new Chart(document.getElementById("closureChart").getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: [
+            "Data Privacy",
+            "State Management",
+            "Function Factory",
+            "Module Pattern",
+            "Callbacks",
+          ],
+          datasets: [
+            {
+              label: "Common Closure Use Cases",
+              data: [90, 85, 75, 80, 95],
+              backgroundColor: "#0366d6",
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+            },
+          },
+        },
+      });
+
+      // Promise States Chart
+      new Chart(document.getElementById("promiseChart").getContext("2d"), {
+        type: "doughnut",
+        data: {
+          labels: ["Pending", "Resolved", "Rejected"],
+          datasets: [
+            {
+              data: [33, 45, 22],
+              backgroundColor: ["#f6c23e", "#1cc88a", "#e74a3b"],
+            },
+          ],
+        },
+      });
+
+      // Prototype Chain Chart
+      new Chart(document.getElementById("prototypeChart").getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: [
+            "Object Creation",
+            "Inheritance",
+            "Method Sharing",
+            "Memory Efficiency",
+          ],
+          datasets: [
+            {
+              label: "Prototype Benefits",
+              data: [85, 90, 95, 88],
+              backgroundColor: "#0366d6",
+            },
+          ],
+        },
+      });
+    </script>
+  </body>
+</html>

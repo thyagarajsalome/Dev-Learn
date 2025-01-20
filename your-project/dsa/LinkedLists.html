@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        max-width: 1000px;
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+        padding: 0 20px;
+      }
+      .visualization {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        background: #fff;
+      }
+      .node-container {
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        padding: 20px 0;
+        min-height: 100px;
+      }
+      .node {
+        display: flex;
+        align-items: center;
+        margin-right: 40px;
+        position: relative;
+        transition: all 0.3s;
+      }
+      .node-content {
+        width: 60px;
+        height: 60px;
+        border: 2px solid #4caf50;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        font-weight: bold;
+        position: relative;
+      }
+      .node-pointer {
+        width: 40px;
+        height: 2px;
+        background: #4caf50;
+        position: relative;
+        margin: 0 10px;
+      }
+      .node-pointer::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: -4px;
+        border: 5px solid transparent;
+        border-left-color: #4caf50;
+      }
+      .controls {
+        margin: 20px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      button {
+        padding: 8px 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-right: 10px;
+      }
+      .theory-section {
+        background-color: #f5f5f5;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+      .code-block {
+        background-color: #1e1e1e;
+        color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-family: monospace;
+        line-height: 1.5;
+      }
+      .highlighted {
+        background-color: #ffeb3b;
+        transition: background-color 0.3s;
+      }
+      .time-complexity {
+        background-color: #e3f2fd;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .null-pointer {
+        color: #999;
+        font-style: italic;
+        padding: 10px;
+      }
+      .head-pointer {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-weight: bold;
+        color: #4caf50;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Linked Lists in JavaScript: Interactive Guide</h1>
+
+      <div class="theory-section">
+        <h2>What is a Linked List?</h2>
+        <p>
+          A Linked List is a linear data structure where elements (nodes) are
+          not stored in contiguous memory locations. Each node contains data and
+          a reference (pointer) to the next node in the sequence.
+        </p>
+
+        <h3>Types of Linked Lists:</h3>
+        <ul>
+          <li>
+            <strong>Singly Linked List:</strong> Each node points to the next
+            node
+          </li>
+          <li>
+            <strong>Doubly Linked List:</strong> Each node points to both next
+            and previous nodes
+          </li>
+          <li>
+            <strong>Circular Linked List:</strong> Last node points back to the
+            first node
+          </li>
+        </ul>
+
+        <div class="time-complexity">
+          <h3>Time Complexity:</h3>
+          <ul>
+            <li>Access: O(n) - Must traverse from head</li>
+            <li>Insert at beginning: O(1)</li>
+            <li>Insert at end: O(n)</li>
+            <li>Delete at beginning: O(1)</li>
+            <li>Delete at end: O(n)</li>
+            <li>Search: O(n)</li>
+          </ul>
+        </div>
+
+        <div class="code-block">
+          // Node class implementation class Node { constructor(data) {
+          this.data = data; this.next = null; } } // LinkedList class
+          implementation class LinkedList { constructor() { this.head = null; }
+          // Add node at the beginning prepend(data) { const newNode = new
+          Node(data); newNode.next = this.head; this.head = newNode; } // Add
+          node at the end append(data) { const newNode = new Node(data); if
+          (!this.head) { this.head = newNode; return; } let current = this.head;
+          while (current.next) { current = current.next; } current.next =
+          newNode; } }
+        </div>
+      </div>
+
+      <div class="visualization">
+        <h3>Interactive Linked List Visualization</h3>
+        <div class="node-container" id="linkedListContainer"></div>
+        <div class="controls">
+          <input type="number" id="nodeInput" placeholder="Enter value" />
+          <button onclick="appendNode()">Append</button>
+          <button onclick="prependNode()">Prepend</button>
+          <button onclick="deleteNode()">Delete First</button>
+          <button onclick="deleteLastNode()">Delete Last</button>
+          <button onclick="searchNode()">Search</button>
+          <button onclick="reverseList()">Reverse</button>
+        </div>
+      </div>
+
+      <div class="theory-section">
+        <h2>Common Operations Examples</h2>
+        <div class="code-block">
+          // Common Linked List operations // 1. Search for a value
+          search(value) { let current = this.head; while (current) { if
+          (current.data === value) return true; current = current.next; } return
+          false; } // 2. Reverse the list reverse() { let prev = null; let
+          current = this.head; while (current) { const next = current.next;
+          current.next = prev; prev = current; current = next; } this.head =
+          prev; } // 3. Find middle node findMiddle() { let slow = this.head;
+          let fast = this.head; while (fast && fast.next) { slow = slow.next;
+          fast = fast.next.next; } return slow; }
+        </div>
+      </div>
+    </div>
+
+    <script>
+      class Node {
+        constructor(data) {
+          this.data = data;
+          this.next = null;
+        }
+      }
+
+      class LinkedList {
+        constructor() {
+          this.head = null;
+        }
+      }
+
+      let linkedList = new LinkedList();
+
+      function renderList() {
+        const container = document.getElementById("linkedListContainer");
+        container.innerHTML = "";
+
+        let current = linkedList.head;
+        while (current) {
+          const nodeDiv = document.createElement("div");
+          nodeDiv.className = "node";
+
+          const nodeContent = document.createElement("div");
+          nodeContent.className = "node-content";
+          nodeContent.textContent = current.data;
+
+          if (current === linkedList.head) {
+            const headLabel = document.createElement("div");
+            headLabel.className = "head-pointer";
+            headLabel.textContent = "Head";
+            nodeContent.appendChild(headLabel);
+          }
+
+          nodeDiv.appendChild(nodeContent);
+
+          if (current.next) {
+            const pointer = document.createElement("div");
+            pointer.className = "node-pointer";
+            nodeDiv.appendChild(pointer);
+          } else {
+            const nullPointer = document.createElement("div");
+            nullPointer.className = "null-pointer";
+            nullPointer.textContent = "null";
+            nodeDiv.appendChild(nullPointer);
+          }
+
+          container.appendChild(nodeDiv);
+          current = current.next;
+        }
+      }
+
+      function appendNode() {
+        const input = document.getElementById("nodeInput");
+        if (input.value) {
+          const newNode = new Node(Number(input.value));
+          if (!linkedList.head) {
+            linkedList.head = newNode;
+          } else {
+            let current = linkedList.head;
+            while (current.next) {
+              current = current.next;
+            }
+            current.next = newNode;
+          }
+          renderList();
+          highlightNode(newNode.data);
+          input.value = "";
+        }
+      }
+
+      function prependNode() {
+        const input = document.getElementById("nodeInput");
+        if (input.value) {
+          const newNode = new Node(Number(input.value));
+          newNode.next = linkedList.head;
+          linkedList.head = newNode;
+          renderList();
+          highlightNode(newNode.data);
+          input.value = "";
+        }
+      }
+
+      function deleteNode() {
+        if (linkedList.head) {
+          highlightNode(linkedList.head.data);
+          setTimeout(() => {
+            linkedList.head = linkedList.head.next;
+            renderList();
+          }, 500);
+        }
+      }
+
+      function deleteLastNode() {
+        if (!linkedList.head) return;
+        if (!linkedList.head.next) {
+          linkedList.head = null;
+          renderList();
+          return;
+        }
+
+        let current = linkedList.head;
+        while (current.next.next) {
+          current = current.next;
+        }
+        highlightNode(current.next.data);
+        setTimeout(() => {
+          current.next = null;
+          renderList();
+        }, 500);
+      }
+
+      function searchNode() {
+        const input = document.getElementById("nodeInput");
+        if (input.value) {
+          const searchValue = Number(input.value);
+          let current = linkedList.head;
+          while (current) {
+            if (current.data === searchValue) {
+              highlightNode(current.data);
+              break;
+            }
+            current = current.next;
+          }
+          input.value = "";
+        }
+      }
+
+      function reverseList() {
+        if (!linkedList.head) return;
+
+        let prev = null;
+        let current = linkedList.head;
+        while (current) {
+          const next = current.next;
+          current.next = prev;
+          prev = current;
+          current = next;
+        }
+        linkedList.head = prev;
+        renderList();
+      }
+
+      function highlightNode(value) {
+        const nodes = document.querySelectorAll(".node-content");
+        nodes.forEach((node) => {
+          if (Number(node.textContent) === value) {
+            node.classList.add("highlighted");
+            setTimeout(() => node.classList.remove("highlighted"), 1000);
+          }
+        });
+      }
+
+      // Initialize with some nodes
+      linkedList.head = new Node(1);
+      linkedList.head.next = new Node(2);
+      linkedList.head.next.next = new Node(3);
+      renderList();
+    </script>
+  </body>
+</html>

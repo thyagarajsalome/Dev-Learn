@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Advanced JavaScript Concepts</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+      :root {
+        --primary: #2563eb;
+        --secondary: #475569;
+        --success: #16a34a;
+        --warning: #ca8a04;
+        --error: #dc2626;
+        --background: #f8fafc;
+        --surface: #ffffff;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: var(--background);
+        color: var(--secondary);
+      }
+
+      .section {
+        background: var(--surface);
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .code-block {
+        background: #1a1a1a;
+        color: #e0e0e0;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 15px 0;
+        font-family: "Monaco", monospace;
+        overflow-x: auto;
+        position: relative;
+      }
+
+      .code-block .run-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .interactive-demo {
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 8px;
+        background: #f8fafc;
+      }
+
+      button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px;
+        transition: all 0.3s;
+      }
+
+      button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .result {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f1f8ff;
+        border-radius: 6px;
+        border-left: 4px solid var(--primary);
+      }
+
+      .chart-container {
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background: var(--surface);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+      }
+
+      .tab {
+        padding: 12px 24px;
+        background: #e2e8f0;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .tab.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .content {
+        display: none;
+      }
+
+      .content.active {
+        display: block;
+      }
+
+      .memory-visualization {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+      }
+
+      .memory-block {
+        padding: 15px;
+        background: #f1f8ff;
+        border-radius: 6px;
+        min-width: 150px;
+        text-align: center;
+      }
+
+      .concept-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 10px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .visualization {
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 15px 0;
+      }
+
+      .error {
+        color: var(--error);
+        background: #fee2e2;
+        padding: 10px;
+        border-radius: 6px;
+        margin: 10px 0;
+      }
+
+      .success {
+        color: var(--success);
+        background: #dcfce7;
+        padding: 10px;
+        border-radius: 6px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Advanced JavaScript Concepts</h1>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showContent('generators')">
+        Generators & Iterators
+      </button>
+      <button class="tab" onclick="showContent('proxy')">
+        Proxy & Reflection
+      </button>
+      <button class="tab" onclick="showContent('performance')">
+        Performance & Memory
+      </button>
+      <button class="tab" onclick="showContent('patterns')">
+        Design Patterns
+      </button>
+    </div>
+
+    <div id="generators" class="content active section">
+      <h2>Generators & Iterators</h2>
+
+      <div class="concept-card">
+        <h3>Generator Function Example:</h3>
+        <div class="code-block">
+          function* numberGenerator() { yield 1; yield 2; yield 3; } const gen =
+          numberGenerator(); console.log(gen.next()); // { value: 1, done: false
+          } console.log(gen.next()); // { value: 2, done: false }
+          console.log(gen.next()); // { value: 3, done: false }
+          console.log(gen.next()); // { value: undefined, done: true }
+        </div>
+        <button onclick="demonstrateGenerator()">Run Generator</button>
+        <div id="generatorResult" class="result"></div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="generatorChart"></canvas>
+      </div>
+    </div>
+
+    <div id="proxy" class="content section">
+      <h2>Proxy & Reflection</h2>
+
+      <div class="concept-card">
+        <h3>Object Proxy Example:</h3>
+        <div class="code-block">
+          const target = { name: 'John', age: 30 }; const handler = { get:
+          function(target, prop) { return `Accessing ${prop}: ${target[prop]}`;
+          }, set: function(target, prop, value) { console.log(`Setting ${prop} =
+          ${value}`); target[prop] = value; return true; } }; const proxy = new
+          Proxy(target, handler);
+        </div>
+        <button onclick="demonstrateProxy()">Try Proxy</button>
+        <div id="proxyResult" class="result"></div>
+      </div>
+
+      <div class="visualization" id="proxyVisualization"></div>
+    </div>
+
+    <div id="performance" class="content section">
+      <h2>Performance & Memory Management</h2>
+
+      <div class="concept-card">
+        <h3>Memory Leak Example:</h3>
+        <div class="code-block">
+          let heavyObject = null; function createLeak() { const array = [];
+          for(let i = 0; i < 1000; i++) { array.push(new Array(1000).fill('x'));
+          } heavyObject = array; // Potential memory leak }
+        </div>
+        <button onclick="demonstrateMemoryLeak()">Simulate Memory Usage</button>
+        <button onclick="cleanupMemory()">Cleanup Memory</button>
+        <div id="memoryResult" class="result"></div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="memoryChart"></canvas>
+      </div>
+    </div>
+
+    <div id="patterns" class="content section">
+      <h2>Advanced Design Patterns</h2>
+
+      <div class="concept-card">
+        <h3>Observer Pattern:</h3>
+        <div class="code-block">
+          class Subject { constructor() { this.observers = []; }
+          subscribe(observer) { this.observers.push(observer); } notify(data) {
+          this.observers.forEach(observer => observer.update(data)); } }
+        </div>
+        <button onclick="demonstrateObserver()">Run Observer Demo</button>
+        <div id="observerResult" class="result"></div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="patternsChart"></canvas>
+      </div>
+    </div>
+
+    <script>
+      // Tab Navigation
+      function showContent(contentId) {
+        document.querySelectorAll(".content").forEach((content) => {
+          content.classList.remove("active");
+        });
+        document.querySelectorAll(".tab").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+        document.getElementById(contentId).classList.add("active");
+        event.target.classList.add("active");
+      }
+
+      // Generator Demo
+      function demonstrateGenerator() {
+        function* fibonacci() {
+          let prev = 0,
+            curr = 1;
+          while (true) {
+            yield curr;
+            [prev, curr] = [curr, prev + curr];
+          }
+        }
+
+        const fib = fibonacci();
+        const result = [];
+        for (let i = 0; i < 10; i++) {
+          result.push(fib.next().value);
+        }
+
+        document.getElementById("generatorResult").innerHTML = `
+                First 10 Fibonacci numbers: ${result.join(", ")}
+            `;
+      }
+
+      // Proxy Demo
+      function demonstrateProxy() {
+        const target = {
+          name: "John",
+          age: 30,
+        };
+
+        const handler = {
+          get: function (target, prop) {
+            return `Accessing ${prop}: ${target[prop]}`;
+          },
+          set: function (target, prop, value) {
+            const result = `Setting ${prop} = ${value}`;
+            target[prop] = value;
+            document.getElementById("proxyResult").innerHTML += result + "<br>";
+            return true;
+          },
+        };
+
+        const proxy = new Proxy(target, handler);
+
+        proxy.name = "Jane";
+        proxy.age = 25;
+
+        document.getElementById("proxyResult").innerHTML += `
+                ${proxy.name}<br>
+                ${proxy.age}
+            `;
+      }
+
+      // Memory Demo
+      let memoryData = [];
+      let memoryChart;
+
+      function demonstrateMemoryLeak() {
+        const data = [];
+        for (let i = 0; i < 100; i++) {
+          data.push(new Array(1000).fill("x"));
+        }
+        memoryData.push(data);
+
+        updateMemoryChart();
+        document.getElementById("memoryResult").innerHTML = `
+                Memory usage simulation: ${memoryData.length * 100}KB allocated
+            `;
+      }
+
+      function cleanupMemory() {
+        memoryData = [];
+        updateMemoryChart();
+        document.getElementById("memoryResult").innerHTML = "Memory cleaned up";
+      }
+
+      function updateMemoryChart() {
+        if (memoryChart) {
+          memoryChart.destroy();
+        }
+
+        const ctx = document.getElementById("memoryChart").getContext("2d");
+        memoryChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: Array.from(
+              { length: memoryData.length },
+              (_, i) => `Allocation ${i + 1}`
+            ),
+            datasets: [
+              {
+                label: "Memory Usage (KB)",
+                data: memoryData.map((_, i) => (i + 1) * 100),
+                borderColor: "#2563eb",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+
+      // Observer Pattern Demo
+      function demonstrateObserver() {
+        class Observer {
+          constructor(name) {
+            this.name = name;
+          }
+
+          update(data) {
+            document.getElementById(
+              "observerResult"
+            ).innerHTML += `${this.name} received: ${data}<br>`;
+          }
+        }
+
+        const subject = new Subject();
+        const observer1 = new Observer("Observer 1");
+        const observer2 = new Observer("Observer 2");
+
+        subject.subscribe(observer1);
+        subject.subscribe(observer2);
+
+        document.getElementById("observerResult").innerHTML = "";
+        subject.notify("Hello World!");
+      }
+
+      // Initialize Charts
+      new Chart(document.getElementById("generatorChart").getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: [
+            "Memory Efficiency",
+            "Lazy Evaluation",
+            "Infinite Sequences",
+            "Custom Iteration",
+          ],
+          datasets: [
+            {
+              label: "Generator Benefits",
+              data: [90, 85, 95, 88],
+              backgroundColor: "#2563eb",
+            },
+          ],
+        },
+      });
+
+      new Chart(document.getElementById("patternsChart").getContext("2d"), {
+        type: "radar",
+        data: {
+          labels: ["Singleton", "Observer", "Factory", "Module", "Decorator"],
+          datasets: [
+            {
+              label: "Pattern Usage",
+              data: [75, 90, 85, 95, 80],
+              backgroundColor: "rgba(37, 99, 235, 0.2)",
+              borderColor: "#2563eb",
+            },
+          ],
+        },
+      });
+    </script>
+  </body>
+</html>

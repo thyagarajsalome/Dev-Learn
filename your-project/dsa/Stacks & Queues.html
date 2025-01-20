@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        max-width: 1000px;
+        margin: 20px auto;
+        font-family: Arial, sans-serif;
+        padding: 0 20px;
+      }
+      .visualization {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        background: #fff;
+      }
+      .structure-container {
+        min-height: 300px;
+        border: 2px solid #4caf50;
+        margin: 20px 0;
+        position: relative;
+        border-radius: 8px;
+        padding: 10px;
+      }
+      .stack-container {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        height: 100%;
+      }
+      .queue-container {
+        display: flex;
+        align-items: center;
+        height: 100px;
+        overflow-x: auto;
+        padding: 10px;
+      }
+      .element {
+        width: 60px;
+        height: 60px;
+        border: 2px solid #4caf50;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        font-weight: bold;
+        margin: 5px;
+        transition: all 0.3s;
+      }
+      .stack-element {
+        animation: stackPush 0.3s ease-out;
+      }
+      .queue-element {
+        animation: queueEnqueue 0.3s ease-out;
+      }
+      @keyframes stackPush {
+        from {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      @keyframes queueEnqueue {
+        from {
+          transform: translateX(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      .controls {
+        margin: 20px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      button {
+        padding: 8px 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-right: 10px;
+      }
+      .theory-section {
+        background-color: #f5f5f5;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+      .code-block {
+        background-color: #1e1e1e;
+        color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-family: monospace;
+        line-height: 1.5;
+      }
+      .highlighted {
+        background-color: #ffeb3b;
+        transition: background-color 0.3s;
+      }
+      .time-complexity {
+        background-color: #e3f2fd;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .structure-label {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #4caf50;
+      }
+      .tabs {
+        display: flex;
+        margin-bottom: 20px;
+      }
+      .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        background: #f5f5f5;
+      }
+      .tab.active {
+        background: #4caf50;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Stacks & Queues in JavaScript: Interactive Guide</h1>
+
+      <div class="theory-section">
+        <h2>What are Stacks and Queues?</h2>
+
+        <h3>Stack</h3>
+        <p>
+          A Stack is a linear data structure that follows the LIFO (Last In,
+          First Out) principle. Think of it like a stack of plates - you can
+          only add or remove plates from the top.
+        </p>
+
+        <div class="time-complexity">
+          <h4>Stack Operations - Time Complexity:</h4>
+          <ul>
+            <li>Push (Insert): O(1)</li>
+            <li>Pop (Remove): O(1)</li>
+            <li>Peek (Top element): O(1)</li>
+            <li>Search: O(n)</li>
+          </ul>
+        </div>
+
+        <h3>Queue</h3>
+        <p>
+          A Queue is a linear data structure that follows the FIFO (First In,
+          First Out) principle. Think of it like a line of people waiting - the
+          first person to join the line is the first one to leave.
+        </p>
+
+        <div class="time-complexity">
+          <h4>Queue Operations - Time Complexity:</h4>
+          <ul>
+            <li>Enqueue (Insert): O(1)</li>
+            <li>Dequeue (Remove): O(1)</li>
+            <li>Peek (Front element): O(1)</li>
+            <li>Search: O(n)</li>
+          </ul>
+        </div>
+
+        <div class="code-block">
+          // Stack Implementation class Stack { constructor() { this.items = [];
+          } push(element) { this.items.push(element); } pop() { if
+          (this.isEmpty()) return "Stack is empty"; return this.items.pop(); }
+          peek() { return this.items[this.items.length - 1]; } isEmpty() {
+          return this.items.length === 0; } } // Queue Implementation class
+          Queue { constructor() { this.items = []; } enqueue(element) {
+          this.items.push(element); } dequeue() { if (this.isEmpty()) return
+          "Queue is empty"; return this.items.shift(); } peek() { if
+          (this.isEmpty()) return "Queue is empty"; return this.items[0]; }
+          isEmpty() { return this.items.length === 0; } }
+        </div>
+      </div>
+
+      <div class="visualization">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('stack')">Stack</div>
+          <div class="tab" onclick="switchTab('queue')">Queue</div>
+        </div>
+
+        <div id="stack-viz" class="structure-container">
+          <div class="structure-label">Stack (LIFO)</div>
+          <div class="stack-container" id="stackContainer"></div>
+          <div class="controls">
+            <input type="number" id="stackInput" placeholder="Enter value" />
+            <button onclick="pushStack()">Push</button>
+            <button onclick="popStack()">Pop</button>
+            <button onclick="peekStack()">Peek</button>
+          </div>
+        </div>
+
+        <div id="queue-viz" class="structure-container" style="display: none">
+          <div class="structure-label">Queue (FIFO)</div>
+          <div class="queue-container" id="queueContainer"></div>
+          <div class="controls">
+            <input type="number" id="queueInput" placeholder="Enter value" />
+            <button onclick="enqueue()">Enqueue</button>
+            <button onclick="dequeue()">Dequeue</button>
+            <button onclick="peekQueue()">Peek</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="theory-section">
+        <h2>Common Use Cases</h2>
+        <ul>
+          <li>
+            <strong>Stacks:</strong>
+            <ul>
+              <li>Function call stack in programming languages</li>
+              <li>Undo/Redo operations</li>
+              <li>Expression evaluation</li>
+              <li>Browser history</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Queues:</strong>
+            <ul>
+              <li>Task scheduling</li>
+              <li>Print job processing</li>
+              <li>Message buffering</li>
+              <li>Breadth-first search</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="code-block">
+          // Example: Using Stack for Expression Validation function
+          isValidParentheses(expr) { const stack = []; for (let char of expr) {
+          if (char === '(') { stack.push(char); } else if (char === ')') { if
+          (stack.length === 0) return false; stack.pop(); } } return
+          stack.length === 0; } // Example: Using Queue for Task Processing
+          class TaskQueue { constructor() { this.queue = new Queue(); }
+          addTask(task) { this.queue.enqueue(task); } processTasks() { while
+          (!this.queue.isEmpty()) { const task = this.queue.dequeue();
+          console.log(`Processing task: ${task}`); } } }
+        </div>
+      </div>
+    </div>
+
+    <script>
+      class Stack {
+        constructor() {
+          this.items = [];
+        }
+
+        push(element) {
+          this.items.push(element);
+        }
+
+        pop() {
+          if (this.isEmpty()) return null;
+          return this.items.pop();
+        }
+
+        peek() {
+          if (this.isEmpty()) return null;
+          return this.items[this.items.length - 1];
+        }
+
+        isEmpty() {
+          return this.items.length === 0;
+        }
+      }
+
+      class Queue {
+        constructor() {
+          this.items = [];
+        }
+
+        enqueue(element) {
+          this.items.push(element);
+        }
+
+        dequeue() {
+          if (this.isEmpty()) return null;
+          return this.items.shift();
+        }
+
+        peek() {
+          if (this.isEmpty()) return null;
+          return this.items[0];
+        }
+
+        isEmpty() {
+          return this.items.length === 0;
+        }
+      }
+
+      const stack = new Stack();
+      const queue = new Queue();
+
+      function renderStack() {
+        const container = document.getElementById("stackContainer");
+        container.innerHTML = "";
+        stack.items.forEach((item) => {
+          const element = document.createElement("div");
+          element.className = "element stack-element";
+          element.textContent = item;
+          container.appendChild(element);
+        });
+      }
+
+      function renderQueue() {
+        const container = document.getElementById("queueContainer");
+        container.innerHTML = "";
+        queue.items.forEach((item) => {
+          const element = document.createElement("div");
+          element.className = "element queue-element";
+          element.textContent = item;
+          container.appendChild(element);
+        });
+      }
+
+      function pushStack() {
+        const input = document.getElementById("stackInput");
+        if (input.value) {
+          stack.push(Number(input.value));
+          renderStack();
+          input.value = "";
+        }
+      }
+
+      function popStack() {
+        const value = stack.pop();
+        if (value !== null) {
+          const elements = document.querySelectorAll(".stack-element");
+          if (elements.length > 0) {
+            elements[elements.length - 1].classList.add("highlighted");
+            setTimeout(() => {
+              renderStack();
+            }, 500);
+          }
+        }
+      }
+
+      function peekStack() {
+        const value = stack.peek();
+        if (value !== null) {
+          const elements = document.querySelectorAll(".stack-element");
+          if (elements.length > 0) {
+            elements[elements.length - 1].classList.add("highlighted");
+            setTimeout(() => {
+              elements[elements.length - 1].classList.remove("highlighted");
+            }, 1000);
+          }
+        }
+      }
+
+      function enqueue() {
+        const input = document.getElementById("queueInput");
+        if (input.value) {
+          queue.enqueue(Number(input.value));
+          renderQueue();
+          input.value = "";
+        }
+      }
+
+      function dequeue() {
+        const value = queue.dequeue();
+        if (value !== null) {
+          const elements = document.querySelectorAll(".queue-element");
+          if (elements.length > 0) {
+            elements[0].classList.add("highlighted");
+            setTimeout(() => {
+              renderQueue();
+            }, 500);
+          }
+        }
+      }
+
+      function peekQueue() {
+        const value = queue.peek();
+        if (value !== null) {
+          const elements = document.querySelectorAll(".queue-element");
+          if (elements.length > 0) {
+            elements[0].classList.add("highlighted");
+            setTimeout(() => {
+              elements[0].classList.remove("highlighted");
+            }, 1000);
+          }
+        }
+      }
+
+      function switchTab(tab) {
+        const tabs = document.querySelectorAll(".tab");
+        const stackViz = document.getElementById("stack-viz");
+        const queueViz = document.getElementById("queue-viz");
+
+        tabs.forEach((t) => t.classList.remove("active"));
+        if (tab === "stack") {
+          tabs[0].classList.add("active");
+          stackViz.style.display = "block";
+          queueViz.style.display = "none";
+        } else {
+          tabs[1].classList.add("active");
+          stackViz.style.display = "none";
+          queueViz.style.display = "block";
+        }
+      }
+
+      // Initialize with some example data
+      stack.push(1);
+      stack.push(2);
+      stack.push(3);
+      renderStack();
+
+      queue.enqueue(1);
+      queue.enqueue(2);
+      queue.enqueue(3);
+      renderQueue();
+    </script>
+  </body>
+</html>
